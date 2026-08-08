@@ -43,3 +43,12 @@ logreg_accuracy = accuracy_score(y_test, logreg_pred)
 logreg_f1 = f1_score(y_test, logreg_pred, average="macro")
 logreg_auc = roc_auc_score(y_test, logreg_proba)
 print("Logistic accuracy:", logreg_accuracy, "F1:", logreg_f1, "AUC:", logreg_auc)
+
+dummy_auc = roc_auc_score(y_test, dummy.predict_proba(X_test)[:, 1])
+
+results = pd.DataFrame([
+    {"model": "dummy", "accuracy": dummy_accuracy, "macro_f1": dummy_f1, "roc_auc": dummy_auc},
+    {"model": "logistic_T0", "accuracy": logreg_accuracy, "macro_f1": logreg_f1, "roc_auc": logreg_auc}
+])
+results.to_csv("results/baselines.csv", index=False)
+print(results)
