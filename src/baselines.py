@@ -9,12 +9,19 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 
 df = pd.read_csv("data/practice_academic_success.csv")
+
 T0_FEATURES = ["age_band", "entry_route", "prior_gpa", "first_generation", "financial_support", "distance_km"]
+T1_FEATURES = T0_FEATURES + ["week4_attendance_rate", "week4_lms_logins", "assignment1_score", "support_sessions_week4"]
+
 TARGET = "academic_success"
 RANDOM_SEED = 42
+
 X = df[T0_FEATURES]
+X_t1 = df[T1_FEATURES]
 y = df[TARGET]
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_SEED)
+X_train_t1, X_test_t1, y_train_t1, y_test_t1 = train_test_split(X_t1, y, test_size=0.2, stratify=y, random_state=RANDOM_SEED)
 print("Train size:", X_train.shape, "Test size:", X_test.shape)
 
 dummy = DummyClassifier(strategy="most_frequent", random_state=RANDOM_SEED)
@@ -28,13 +35,11 @@ numeric_features = ["prior_gpa", "first_generation", "financial_support", "dista
 categorical_features = ["age_band", "entry_route"]
 
 numeric_transformer = Pipeline(steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())])
-
 categorical_transformer = Pipeline(steps=[("imputer", SimpleImputer(strategy="most_frequent")), ("onehot", OneHotEncoder(handle_unknown="ignore"))])
 
 preprocessor = ColumnTransformer(transformers=[("num", numeric_transformer, numeric_features), ("cat", categorical_transformer, categorical_features)])
 
 logreg_pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LogisticRegression(random_state=RANDOM_SEED, max_iter=1000))])
-
 logreg_pipeline.fit(X_train, y_train)
 logreg_pred = logreg_pipeline.predict(X_test)
 logreg_proba = logreg_pipeline.predict_proba(X_test)[:, 1]
