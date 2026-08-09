@@ -85,3 +85,15 @@ comparison = pd.DataFrame([
 ])
 comparison.to_csv("results/t0_vs_t1.csv", index=False)
 print(comparison)
+
+errors_df = X_test_t1.copy()
+errors_df["actual"] = y_test_t1.values
+errors_df["t0_pred"] = logreg_pred
+errors_df["t1_pred"] = t1_pred
+
+wrong_t1 = errors_df[errors_df["actual"] != errors_df["t1_pred"]]
+print("Number of T1 wrong predictions:", len(wrong_t1))
+print(wrong_t1.head(10))
+
+fixed_by_t1 = errors_df[(errors_df["actual"] != errors_df["t0_pred"]) & (errors_df["actual"] == errors_df["t1_pred"])]
+print("Errors fixed by adding week-4 features:", len(fixed_by_t1))
