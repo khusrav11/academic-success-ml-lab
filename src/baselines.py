@@ -17,12 +17,17 @@ T1_FEATURES = T0_FEATURES + ["week4_attendance_rate", "week4_lms_logins", "assig
 TARGET = "academic_success"
 RANDOM_SEED = 42
 
+LEAKED_FEATURES = [c for c in df.columns if c not in ["student_id", TARGET]]
+
 X = df[T0_FEATURES]
 X_t1 = df[T1_FEATURES]
+X_leaked = df[LEAKED_FEATURES]
 y = df[TARGET]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_SEED)
 X_train_t1, X_test_t1, y_train_t1, y_test_t1 = train_test_split(X_t1, y, test_size=0.2, stratify=y, random_state=RANDOM_SEED)
+
+X_train_leak, X_test_leak, y_train_leak, y_test_leak = train_test_split(X_leaked, y, test_size=0.2, stratify=y, random_state=RANDOM_SEED)
 print("Train size:", X_train.shape, "Test size:", X_test.shape)
 
 dummy = DummyClassifier(strategy="most_frequent", random_state=RANDOM_SEED)
@@ -97,3 +102,21 @@ print(wrong_t1.head(10))
 
 fixed_by_t1 = errors_df[(errors_df["actual"] != errors_df["t0_pred"]) & (errors_df["actual"] == errors_df["t1_pred"])]
 print("Errors fixed by adding week-4 features:", len(fixed_by_t1))
+
+numeric_leaked = [c for c in LEAKED_FEATURES if c not in categorical_features]
+
+preprocessor_leaked = ColumnTransformer(transformers=[("num", numeric_transformer, numeric_leaked), ("cat", categorical_transformer, categorical_features)])
+
+leaked_pipeline = Pipeline(steps=[("preprocessor", preprocessor_leaked), ("classifier", LogisticRegression(random_state=RANDOM_SEED, max_iter=1000))])
+
+leaked_pipeline.fit(X_train_leak, y_train_leak)
+
+leaked_pred = leaked_pipeline.predict(X_test_leak)
+leaked_proba = leaked_pipeline.predict_proba(X_test_leak)[:, 1]
+
+leaked_accuracy = accuracy_score(y_test_leak, leaked_pred)
+leaked_f1 = f1_score(y_test_leak, leaked_pred, average="macro")
+leaked_auc = roc_auc_score(y_test_leak, leaked_proba)
+
+print("INVALID (leaked) model - DO NOT USE FOR REAL PREDICTIONS")
+print("Leaked accuracy:", leaked_accuracy, "F1:", leaked_f1, "AUC:", leaked_auc)
