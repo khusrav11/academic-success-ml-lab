@@ -9,6 +9,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import brier_score_loss
 
 df = pd.read_csv("data/practice_academic_success.csv")
 
@@ -126,3 +127,14 @@ leaked_auc = roc_auc_score(y_test_leak, leaked_proba)
 
 print("INVALID (leaked) model - DO NOT USE FOR REAL PREDICTIONS")
 print("Leaked accuracy:", leaked_accuracy, "F1:", leaked_f1, "AUC:", leaked_auc)
+
+t1_brier = brier_score_loss(y_test_t1, t1_proba)
+print("T1 Brier score:", t1_brier)
+
+calibration_df = pd.DataFrame({"predicted_proba": t1_proba, "actual": y_test_t1.values})
+calibration_df["bin"] = pd.cut(calibration_df["predicted_proba"], bins=[0, 0.2, 0.4, 0.6, 0.8, 1.0])
+
+calibration_table = calibration_df.groupby("bin", observed=True).agg(predicted_mean=("predicted_proba", "mean"), actual_rate=("actual", "mean"), count=("actual", "size"))
+
+print(calibration_table)
+calibration_table.to_csv("results/calibration_table.csv")
