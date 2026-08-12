@@ -165,3 +165,12 @@ print(age_band_metrics)
 
 first_gen_metrics.to_csv("results/subgroup_first_generation.csv", index=False)
 age_band_metrics.to_csv("results/subgroup_age_band.csv", index=False)
+
+def apply_threshold(proba, threshold):
+    return (proba >= threshold).astype(int)
+
+for threshold in [0.3, 0.5, 0.7]:
+    pred_at_threshold = apply_threshold(t1_proba, threshold)
+    recall_at_t = recall_score(y_test_t1, pred_at_threshold, zero_division=0)
+    flagged_rate = pred_at_threshold.mean()
+    print(f"Threshold {threshold}: recall={recall_at_t:.3f}, flagged_as_at_risk_rate={1 - flagged_rate:.3f}")
