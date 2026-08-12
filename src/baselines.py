@@ -10,6 +10,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import brier_score_loss
+from sklearn.metrics import recall_score
 
 df = pd.read_csv("data/practice_academic_success.csv")
 
@@ -138,3 +139,29 @@ calibration_table = calibration_df.groupby("bin", observed=True).agg(predicted_m
 
 print(calibration_table)
 calibration_table.to_csv("results/calibration_table.csv")
+
+def group_metrics(df_subset, actual_col, pred_col, group_col):
+    rows = []
+    for group_value in df_subset[group_col].unique():
+        mask = df_subset[group_col] == group_value
+        actual = df_subset.loc[mask, actual_col]
+        pred = df_subset.loc[mask, pred_col]
+        recall = recall_score(actual, pred, zero_division=0)
+        false_positive_rate = ((pred == 1) & (actual == 0)).sum() / max((actual == 0).sum(), 1)
+        rows.append({"group": group_value, "n": mask.sum(), "recall": recall, "fpr": false_positive_rate})
+    return pd.DataFrame(rows)
+
+group_df = X_test_t1.copy()
+group_df["actual"] = y_test_t1.values
+group_df["t1_pred"] = t1_pred
+
+first_gen_metrics = group_metrics(group_df, "actual", "t1_pred", "first_generation")
+print("By first_generation:")
+print(first_gen_metrics)
+
+age_band_metrics = group_metrics(group_df, "actual", "t1_pred", "age_band")
+print("By age_band:")
+print(age_band_metrics)
+
+first_gen_metrics.to_csv("results/subgroup_first_generation.csv", index=False)
+age_band_metrics.to_csv("results/subgroup_age_band.csv", index=False)
