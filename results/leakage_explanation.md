@@ -1,0 +1,3 @@
+# Why the leaked model is invalid
+
+My prediction was correct: the leaked model outperformed T1 but this result is not valid evidence. Accuracy, macro F1 and ROC-AUC all reached 1.0 because it used information that wasn't available at week 4 such as `final_attendance_rate`,`final_exam_score` and `credits_completed`. For example `credits_completed` clearly separates the two outcome groups. A model can be accurate but still invalid if it uses information that does not exist when the prediction must be made.
