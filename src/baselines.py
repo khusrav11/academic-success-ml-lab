@@ -1,4 +1,5 @@
 import pandas as pd
+
 from sklearn.model_selection import train_test_split
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
@@ -13,6 +14,11 @@ df = pd.read_csv("data/practice_academic_success.csv")
 
 T0_FEATURES = ["age_band", "entry_route", "prior_gpa", "first_generation", "financial_support", "distance_km"]
 T1_FEATURES = T0_FEATURES + ["week4_attendance_rate", "week4_lms_logins", "assignment1_score", "support_sessions_week4"]
+
+from feature_guard import check_no_forbidden_columns
+
+check_no_forbidden_columns(T0_FEATURES)
+check_no_forbidden_columns(T1_FEATURES)
 
 TARGET = "academic_success"
 RANDOM_SEED = 42
