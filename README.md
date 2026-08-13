@@ -23,3 +23,25 @@ How well can academic success be predicted using only information available by a
 - `results/` saved experiment outputs
 
 Do not place private student data, secrets or large model files in the repository.
+
+## Running the pipeline
+
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+Train the model:
+```bash
+python3 -m src.train
+```
+
+Evaluate the trained model:
+```bash
+python3 -m src.evaluate
+```
+
+Run the test suite:
+```bash
+python3 -m pytest -v
+```
