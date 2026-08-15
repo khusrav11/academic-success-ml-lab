@@ -32,24 +32,27 @@ assignment1_score = st.number_input("Assignment 1 score", min_value=0.0, max_val
 support_sessions_week4 = st.number_input("Support sessions used (week 4)", min_value=0, value=1, step=1)
 
 if st.button("Predict"):
-  input_df = pd.DataFrame([{
-    "age_band": age_band,
-    "entry_route": entry_route,
-    "prior_gpa": prior_gpa,
-    "first_generation": 1 if first_generation == "Yes" else 0,
-    "financial_support": 1 if financial_support == "Yes" else 0,
-    "distance_km": distance_km,
-    "week4_attendance_rate": week4_attendance_rate,
-    "week4_lms_logins": week4_lms_logins,
-    "assignment1_score": assignment1_score,
-    "support_sessions_week4": support_sessions_week4,
-  }])
+  try:
+    input_df = pd.DataFrame([{
+      "age_band": age_band,
+      "entry_route": entry_route,
+      "prior_gpa": prior_gpa,
+      "first_generation": 1 if first_generation == "Yes" else 0,
+      "financial_support": 1 if financial_support == "Yes" else 0,
+      "distance_km": distance_km,
+      "week4_attendance_rate": week4_attendance_rate,
+      "week4_lms_logins": week4_lms_logins,
+      "assignment1_score": assignment1_score,
+      "support_sessions_week4": support_sessions_week4
+    }])
 
-  probability = pipeline.predict_proba(input_df)[0][1]
-  st.metric("Predicted probability of academic success", f"{probability:.1%}")
+    probability = pipeline.predict_proba(input_df)[0][1]
+    st.metric("Predicted probability of academic success", f"{probability:.1%}")
 
-  if 0.4 <= probability <= 0.6:
-    st.info("Review recommended: this prediction is close to the decision boundary and should be interpreted with extra care.")
-
-    st.caption("This number is statistical estimate based on limited early course data. It's not a fact about the student and should always be reviewed by person before any action is taken.")
+    if 0.4 <= probability <= 0.6:
+      st.info("Review recommended: this prediction is close to the decision boundary and should be interpreted with extra care.")
     
+    st.caption("This number is a statistical estimate based on limited early-course data. It is not a fact about the student and should always be reviewed by a person before any action is taken.")
+  
+  except Exception as error:
+    st.error(f"Could not generate a prediction from this input: {error}")
