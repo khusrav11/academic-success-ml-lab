@@ -5,7 +5,7 @@ import streamlit as st
 from src.config import MODEL_PATH
 
 st.title("Academic Success Tool")
-st.warning("This prediction supports human review. It's not a final decision!")
+st.warning("This prediction supports human review. It is not a final decision about any student and should never be used alone.")
 
 pipeline = joblib.load(MODEL_PATH)
 
@@ -44,6 +44,12 @@ if st.button("Predict"):
     "assignment1_score": assignment1_score,
     "support_sessions_week4": support_sessions_week4,
   }])
-  
+
   probability = pipeline.predict_proba(input_df)[0][1]
   st.metric("Predicted probability of academic success", f"{probability:.1%}")
+
+  if 0.4 <= probability <= 0.6:
+    st.info("Review recommended: this prediction is close to the decision boundary and should be interpreted with extra care.")
+
+    st.caption("This number is statistical estimate based on limited early course data. It's not a fact about the student and should always be reviewed by person before any action is taken.")
+    
