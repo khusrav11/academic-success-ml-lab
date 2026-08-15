@@ -30,3 +30,20 @@ week4_lms_logins = st.number_input("Week-4 LMS logins", min_value=0, value=5, st
 assignment1_score = st.number_input("Assignment 1 score", min_value=0.0, max_value=100.0, value=65.0, step=0.5)
 
 support_sessions_week4 = st.number_input("Support sessions used (week 4)", min_value=0, value=1, step=1)
+
+if st.button("Predict"):
+  input_df = pd.DataFrame([{
+    "age_band": age_band,
+    "entry_route": entry_route,
+    "prior_gpa": prior_gpa,
+    "first_generation": 1 if first_generation == "Yes" else 0,
+    "financial_support": 1 if financial_support == "Yes" else 0,
+    "distance_km": distance_km,
+    "week4_attendance_rate": week4_attendance_rate,
+    "week4_lms_logins": week4_lms_logins,
+    "assignment1_score": assignment1_score,
+    "support_sessions_week4": support_sessions_week4,
+  }])
+  
+  probability = pipeline.predict_proba(input_df)[0][1]
+  st.metric("Predicted probability of academic success", f"{probability:.1%}")
