@@ -45,3 +45,8 @@ Run the test suite:
 ```bash
 python3 -m pytest -v
 ```
+
+How to run the web app:
+```bash
+python -m streamlit run app.py
+```
