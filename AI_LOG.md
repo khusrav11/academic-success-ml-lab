@@ -19,3 +19,9 @@
 - Assistance requested: asked Claude for the Streamlit form structure, prediction code and try/except error handling skeleton.
 - What was accepted, changed or rejected: used Claude's code structure as-is, including the responsible-use warning wording, since it matched exactly what the mission card required (prediction supports human review, not a final decision).
 - How the result was verified: ran the app with streamlit run app.py, tested one example input and confirmed the probability matched what src/evaluate.py would produce for the same inputs; tested an out-of-range input to confirm the app shows an error instead of crashing.
+
+## 2026-08-20 — Mission 11
+- Task attempted: loaded UCI dataset 697, defined T0/T1 feature partitions with column validation, compared dummy and logistic regression baselines on the 3-class target, wrote a transfer note.
+- Assistance requested: asked Claude for the data loader structure, general T0/T1 partitioning logic (which I applied myself to the actual UCI column names) and some part of modelling pipeline structure adapted for multi-class metrics.
+- What was accepted, changed or rejected: used the code structure as-is; wrote the T0/T1 column lists and the transfer note myself based on my own review of the dataset's actual columns and results.
+- How the result was verified: ran validate_open_data_columns() to confirm no missing/extra columns; compared the "Enrolled" recall result (0.176, weakest of the 3 classes) against my prediction in the issue, which anticipated this outcome.
