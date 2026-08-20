@@ -19,3 +19,9 @@ X_model = X[T1_FEATURES_OPEN_DATA]
 
 print("X_model shape:", X_model.shape)
 print("Columns in X_model:", X_model.columns.tolist())
+
+print("\nDataset citation info:")
+print(dataset.metadata.name)
+print("DOI:", dataset.metadata.doi if hasattr(dataset.metadata, "doi") else "https://doi.org/10.24432/C5MC89")
+print("License: Creative Commons Attribution 4.0 (CC BY 4.0)")
+print("Retrieved:", "2026-08-20") 
